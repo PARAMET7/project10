@@ -15,6 +15,7 @@ async function addProduct(formData: FormData) {
   const imageUrl = formData.get('imageUrl')?.toString();
   const price = Number(formData.get('price') || 0);
 
+
   if (!name || !description || !imageUrl || !price) {
     throw Error("Missing required fields")
   }
@@ -30,7 +31,7 @@ export default function AddProductPage() {
   return (
     <div className="">
       <h1 className="text-lg mb-3 font-bold">Add Product</h1>
-      <form action="">
+      <form action={addProduct}>
         <input
             required
             type="text"
