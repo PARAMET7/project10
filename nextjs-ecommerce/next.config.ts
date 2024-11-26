@@ -7,6 +7,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "plus.unsplash.com", // Add this line for the plus domain
+      },
     ],
   },
   experimental: {
