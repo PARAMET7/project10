@@ -9,6 +9,8 @@ interface ProductCardProps{
 
 
 export default function ProductCard({product}: ProductCardProps) {
+  const isNew = Date.now() - new Date(product.createdAt).getTime() < 1000 * 60* 60*24*7;
+
   return (
     <Link
       href={"/products/" + product.id}
@@ -26,6 +28,7 @@ export default function ProductCard({product}: ProductCardProps) {
       <div className="card-body">
         <h2 className="card-title">
           {product.name}
+          {isNew && <div className="badge badge-secondary">NEW</div>}
         </h2>
         <p>{product.description}</p>
         <PriceTag price={product.price}></PriceTag>
