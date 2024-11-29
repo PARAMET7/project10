@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 
+
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -10,6 +11,9 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "plus.unsplash.com", // Add this line for the plus domain
+      },
+      {
+        hostname: "lh3.googleusercontent.com"
       },
     ],
   },

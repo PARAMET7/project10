@@ -1,14 +1,17 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import logo from '@/assets/logo.png'
-import { redirect } from 'next/dist/server/api-utils';
+import { redirect } from 'next/navigation';
 import { getCart } from '@/lib/db/cart';
 import SoppingCartButton from './SoppingCartButton';
+import UserMenuButton from './UserMenuButton';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../api/auth/[...nextauth]/route';
 
 async function searchProducts(formData: formData){
   "use server";
 
-  const searchQuery = formData.get('searchQuery')?.toString();
+  const searchQuery = formData.get("searchQuery")?.toString();
 
   if (searchQuery) {
     redirect("/search?query=" + searchQuery);
@@ -16,6 +19,7 @@ async function searchProducts(formData: formData){
 }
 
 export default async function Navbar() {
+  const session = await getServerSession(authOptions)
   const cart = await getCart();
 
   return(
@@ -39,6 +43,7 @@ export default async function Navbar() {
             </div>
           </form>
           <SoppingCartButton cart={cart}></SoppingCartButton>
+          <UserMenuButton session={session}/>
         </div>
       </div>
     </div>
