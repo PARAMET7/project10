@@ -4,31 +4,29 @@ import { prisma } from '@/lib/db/prisma';
 import Image from 'next/image';
 import Link from "next/link";
 
-
 interface HomeProps {
-  searchParams: {page:string};
+  searchParams?: {
+    page?: string;
+  };
 }
 
-export default async function Home({searchParams:{page ="1"}}: HomeProps) {
-  const currentPage = parseInt(page);
+export default async function Home({ searchParams }: HomeProps) {
+  // Ensure `searchParams` exists and has a `page` property
+  const page = searchParams?.page || "1"; // Fallback to "1" if undefined
+  const currentPage = parseInt(page, 10); // Parse as integer with radix 10
 
-  const pageSize =6;
-  const heroItemcount = 1;
-
-
-  const totalItemCount = await prisma.product.count();
-
-  const totalPages= Math.ceil((totalItemCount - heroItemcount)/pageSize)
-
+  const pageSize = 6;
+  const heroItemCount = 1;
 
   try {
+    const totalItemCount = await prisma.product.count();
+    const totalPages = Math.ceil((totalItemCount - heroItemCount) / pageSize);
+
     // Fetch products from the database
     const products = await prisma.product.findMany({
-      orderBy: {
-        id: 'desc',  // Order by descending 'id' if 'id' exists in your schema
-      },
-      skip: (currentPage-1) * pageSize + (currentPage === 1? 0: heroItemcount),
-      take: pageSize + (currentPage === 1? heroItemcount : 0),
+      orderBy: { id: 'desc' },
+      skip: (currentPage - 1) * pageSize + (currentPage === 1 ? 0 : heroItemCount),
+      take: pageSize + (currentPage === 1 ? heroItemCount : 0),
     });
 
     // Check if products are available
@@ -36,40 +34,40 @@ export default async function Home({searchParams:{page ="1"}}: HomeProps) {
       return <div>No products available</div>;
     }
 
-    // Render the first product from the list
     return (
-      <div className="flex flex-col items-center-center">
-        {currentPage===1 && (
-        <div className="hero rounded-xl bg-base-200">
-          <div className="hero-content flex-col lg:flex-row">
-            <Image
-              src={products[0].imageUrl}
-              alt={products[0].name}
-              width={400}
-              height={800}
-              className="w-full max-w-sm rounded-lg shadow-2xl"
-              priority
+      <div className="flex flex-col items-center">
+        {/* Hero Section */}
+        {currentPage === 1 && products[0] && (
+          <div className="hero rounded-xl bg-base-200">
+            <div className="hero-content flex-col lg:flex-row">
+              <Image
+                src={products[0].imageUrl}
+                alt={products[0].name}
+                width={400}
+                height={800}
+                className="w-full max-w-sm rounded-lg shadow-2xl"
+                priority
               />
               <div>
                 <h1 className="text-5xl font-bold">{products[0].name}</h1>
                 <p className="py-6">{products[0].description}</p>
-                <Link
-                  href={'/products/' +products[0].id}
-                  className="btn-primary btn">
-                  Check it out</Link>
+                <Link href={`/products/${products[0].id}`} className="btn-primary btn">
+                  Check it out
+                </Link>
               </div>
+            </div>
           </div>
-        </div>
         )}
 
+        {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {(currentPage === 1 ? products.slice(1): products).map(product => (
-            <ProductCard product={product} key={product.id}/>
+          {(currentPage === 1 ? products.slice(1) : products).map(product => (
+            <ProductCard product={product} key={product.id} />
           ))}
         </div>
-        {totalPages > 1 &&
-        (<PaginationBar currentPage={currentPage} totalPages={totalPages}/>)
-        }
+
+        {/* Pagination Bar */}
+        {totalPages > 1 && <PaginationBar currentPage={currentPage} totalPages={totalPages} />}
       </div>
     );
   } catch (error) {

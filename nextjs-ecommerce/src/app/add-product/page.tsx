@@ -1,13 +1,13 @@
 import { prisma } from "@/lib/db/prisma";
 import { redirect } from "next/navigation";
-import FormSubmitButton from "../../components/FormSubmitButtom"
+import FormSubmitButton from "../../components/FormSubmitButtom";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 
 
-export const metadate = {
-  title: "Add product- My Store"
-}
+export const metadata = {
+  title: "Add Product - My Store",
+};
 
 async function addProduct(formData: FormData) {
   "use server";
@@ -32,11 +32,6 @@ async function addProduct(formData: FormData) {
         data: {name, description, imageUrl, price},
       });
 
-  // for (let i=0; i<50; i++ ){
-  //   await prisma.product.create({
-  //     data: {name, description, imageUrl, price}
-  //   });
-  // }
 
   await prisma.product.create({
     data: {name, description, imageUrl, price}
@@ -54,7 +49,8 @@ export default async function AddProductPage() {
 
 
   return (
-    <div className="">
+    <div>
+      
       <h1 className="text-lg mb-3 font-bold">Add Product</h1>
       <form action={addProduct}>
         <input

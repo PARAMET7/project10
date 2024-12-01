@@ -7,7 +7,7 @@ interface SearchPageProps{
   searchParams: {query: string}
 }
 
-export function generateMatadata({
+export function generateMetadata({
   searchParams: {query},
 } : SearchPageProps): Metadata{
   return {
